@@ -6,6 +6,11 @@ var ServerResult = {
   resultStatus : 'default'
 };
 
+var ServerUser = {
+  user_profile_image : '',
+  user_profile_name : ''
+};
+
 router.post('/login',function(req,res){
   var checkUser = req.body.user_kaokao_id;
 
@@ -13,7 +18,6 @@ router.post('/login',function(req,res){
   db.query(sql, checkUser, function(err, result){
     if (err) {
       res.status(500);
-      ServerResult.resultStatus = 'error';
       //오류 발생
     } else {
       if (result[0] == null) {
@@ -37,7 +41,6 @@ router.post('/register/repeat',function(req,res){
   db.query(sql, checkId, function(err, result){
     if (err) {
       res.status(500);
-      ServerResult.resultStatus = 'error';
       //오류 발생
     } else {
       if (result[0] == null) {
@@ -66,7 +69,6 @@ router.post('/register/submit',function(req,res){
   db.query(sql, user, function(err, result){
     if (err) {
       res.status(500);
-      ServerResult.resultStatus = 'error';
       //오류 발생
     } else {
       ServerResult.resultStatus = 'success';
@@ -75,5 +77,23 @@ router.post('/register/submit',function(req,res){
   });
 });
 //회원가입
+
+router.post('/info',function(req,res){
+
+  var userId = req.body.user_moa_id;
+
+  var sql = 'SELECT user_profile_name, user_profile_image FROM user WHERE user_moa_id = ? ';
+  db.query(sql, userId, function(err, result){
+    if (err) {
+      res.status(500);
+      //오류 발생
+    } else {
+      ServerUser.user_profile_image = result[0].user_profile_image;
+      ServerUser.user_profile_name = result[0].user_profile_name;
+    }
+    res.json(ServerUser);
+  });
+});
+//회원정보 가져오기
 
 module.exports = router;
