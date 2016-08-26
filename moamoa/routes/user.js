@@ -30,13 +30,13 @@ router.post('/login',function(req,res){
 router.post('/register/repeat',function(req,res){
 
   var checkId = req.body.user_moa_id;
-  console.log(checkId);
 
   var sql = 'SELECT user_moa_id FROM user';
   db.query(sql, function(err, result){
     if (err) {
       console.log(err);
       res.status(500);
+      ServerResult.bResult = false;
     } else {
       for (var i = 0; i < result.length; i++) {
         if (checkId == result[i].user_moa_id) {
@@ -50,5 +50,30 @@ router.post('/register/repeat',function(req,res){
 
 });
 //회원가입시 아이디 중복확인
+
+router.post('/register/submit',function(req,res){
+
+  var user = {
+    user_profile_name : req.body.user_profile_name,
+    user_profile_image : req.body.user_profile_image,
+    user_moa_id : req.body.user_moa_id,
+    user_kaokao_id : req.body.user_kaokao_id
+  };
+
+  var sql = 'INSERT INTO user SET ?';
+  db.query(sql, user, function(err, result){
+    if (err) {
+      console.log(err);
+      res.status(500);
+      ServerResult.bResult = false;
+    } else {
+      ServerResult.bResult = true;
+    }
+  });
+
+  res.json(ServerResult);
+
+});
+//회원가입
 
 module.exports = router;
